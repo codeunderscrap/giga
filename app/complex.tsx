@@ -59,9 +59,9 @@ export function projectPercent(x: number, y: number, z: number, yaw: number) {
 const poly = (pts: [number, number][]) => pts.map(([a, b]) => `${a.toFixed(1)},${b.toFixed(1)}`).join(' ');
 
 /* --- Palette -------------------------------------------------------------- */
-const ROOF = '#3b5665';
-const LIT = '#2d4552';
-const SHADE = '#1a2a33';
+const ROOF = '#35525c';
+const LIT = '#22343b';
+const SHADE = '#141f24';
 
 type Block = {
   id: string;
@@ -83,19 +83,19 @@ type Flat = { id: string; x: number; y: number; w: number; d: number; fill: stri
 
 /* --- Site plan ------------------------------------------------------------ */
 const flats: Flat[] = [
-  { id: 'road-a', x: 0.4, y: 7.8, w: 13.2, d: 0.55, fill: '#16242c' },
-  { id: 'road-b', x: 5.3, y: 0.4, w: 0.55, d: 13.2, fill: '#16242c' },
-  { id: 'yard', x: 5.2, y: 9.5, w: 1.2, d: 3.5, fill: '#16242c' },
-  { id: 'etp-1', x: 11.2, y: 9, w: 2.2, d: 1.7, fill: '#0f5a6b', z: 0.06 },
-  { id: 'etp-2', x: 11.2, y: 11, w: 2.2, d: 1.7, fill: '#12707f', z: 0.06 },
-  { id: 'rail', x: 13.2, y: 5, w: 0.5, d: 8.4, fill: '#233741', z: 0.05 },
+  { id: 'road-a', x: 0.4, y: 7.8, w: 13.2, d: 0.55, fill: '#131f24' },
+  { id: 'road-b', x: 5.3, y: 0.4, w: 0.55, d: 13.2, fill: '#131f24' },
+  { id: 'yard', x: 5.2, y: 9.5, w: 1.2, d: 3.5, fill: '#131f24' },
+  { id: 'etp-1', x: 11.2, y: 9, w: 2.2, d: 1.7, fill: '#155f6c', z: 0.06 },
+  { id: 'etp-2', x: 11.2, y: 11, w: 2.2, d: 1.7, fill: '#1c8494', z: 0.06 },
+  { id: 'rail', x: 13.2, y: 5, w: 0.5, d: 8.4, fill: '#1f3138', z: 0.05 },
   ...Array.from({ length: 12 }, (_, i) => ({
     id: `solar-${i}`,
     x: 6.2 + Math.floor(i / 3) * 0.78,
     y: 0.5 + (i % 3) * 0.95,
     w: 0.6,
     d: 0.75,
-    fill: '#1d4b5c',
+    fill: '#1b4c58',
     z: 0.35,
   })),
 ];
@@ -103,30 +103,30 @@ const flats: Flat[] = [
 const blocks: Block[] = [
   /* QA/QC — testing and assay laboratories */
   { id: 'qa', x: 1, y: 0.6, w: 3, d: 2.8, h: 2.2, windows: 3 },
-  { id: 'qa-tower', x: 3.4, y: 1.4, w: 0.9, d: 1.2, h: 2.9, roof: '#456575' },
+  { id: 'qa-tower', x: 3.4, y: 1.4, w: 0.9, d: 1.2, h: 2.9, roof: '#3f606c' },
 
   /* R&D — Critical Mineral & Rare Earth Research Centre */
-  { id: 'rnd', x: 1, y: 4.5, w: 3, d: 3, h: 3, roof: '#456d80', lit: '#33505f', windows: 4 },
-  { id: 'rnd-top', x: 1.6, y: 5.1, w: 1.8, d: 1.8, h: 3.5, roof: '#517d92', lit: '#3a5b6b' },
+  { id: 'rnd', x: 1, y: 4.5, w: 3, d: 3, h: 3, roof: '#4c9eaf', lit: '#2c4f5b', windows: 4 },
+  { id: 'rnd-top', x: 1.6, y: 5.1, w: 1.8, d: 1.8, h: 3.5, roof: '#5aaebf', lit: '#335966' },
 
   /* Operations & People — administration and control */
   { id: 'ops', x: 11, y: 1, w: 2.6, d: 3, h: 2.6, windows: 3 },
-  { id: 'ops-mast', x: 13.1, y: 1.6, w: 0.32, d: 0.32, h: 3.2, roof: '#4a6675' },
-  { id: 'ops-beacon', x: 13.1, y: 1.6, w: 0.32, d: 0.32, h: 3.35, base: 3.2, roof: '#f47735', lit: '#9c4f26', shade: '#7a3d1e' },
+  { id: 'ops-mast', x: 13.1, y: 1.6, w: 0.32, d: 0.32, h: 3.2, roof: '#456773' },
+  { id: 'ops-beacon', x: 13.1, y: 1.6, w: 0.32, d: 0.32, h: 3.35, base: 3.2, roof: '#66d9e8', lit: '#2f7f8c', shade: '#245f69' },
 
   /* Warehousing — intake and dispatch sheds */
-  { id: 'shed-a', x: 1, y: 9.5, w: 4, d: 1.6, h: 1.8, roof: '#47656f', lit: '#2e4854', windows: 1 },
-  { id: 'shed-b', x: 1, y: 11.4, w: 4, d: 1.6, h: 1.8, roof: '#47656f', lit: '#2e4854', windows: 1 },
+  { id: 'shed-a', x: 1, y: 9.5, w: 4, d: 1.6, h: 1.8, roof: '#3f6470', lit: '#253b44', windows: 1 },
+  { id: 'shed-b', x: 1, y: 11.4, w: 4, d: 1.6, h: 1.8, roof: '#3f6470', lit: '#253b44', windows: 1 },
 
   /* Chemical processing — hydrometallurgical & metal production */
-  { id: 'chem-hall', x: 8, y: 4, w: 2.2, d: 3.4, h: 2.4, roof: '#35505e' },
-  { id: 'chem-stack', x: 8.6, y: 4.4, w: 0.34, d: 0.34, h: 4.1, roof: '#4a6675' },
-  { id: 'chem-beacon', x: 8.6, y: 4.4, w: 0.34, d: 0.34, h: 4.28, base: 4.1, roof: '#f47735', lit: '#9c4f26', shade: '#7a3d1e' },
-  { id: 'chem-vent', x: 9.4, y: 5.6, w: 0.3, d: 0.3, h: 3.4, roof: '#8ea3ad', lit: '#425966' },
+  { id: 'chem-hall', x: 8, y: 4, w: 2.2, d: 3.4, h: 2.4, roof: '#2f4c57' },
+  { id: 'chem-stack', x: 8.6, y: 4.4, w: 0.34, d: 0.34, h: 4.1, roof: '#456773' },
+  { id: 'chem-beacon', x: 8.6, y: 4.4, w: 0.34, d: 0.34, h: 4.28, base: 4.1, roof: '#66d9e8', lit: '#2f7f8c', shade: '#245f69' },
+  { id: 'chem-vent', x: 9.4, y: 5.6, w: 0.3, d: 0.3, h: 3.4, roof: '#b8c4c7', lit: '#3d5a66' },
 
   /* Mechanical processing — pre-treatment hall */
-  { id: 'mech', x: 6.2, y: 8.6, w: 3.4, d: 3.2, h: 2.4, roof: '#3f5c6c', windows: 2 },
-  { id: 'mech-annex', x: 9.7, y: 9.4, w: 0.7, d: 1.4, h: 1.6, roof: '#456575' },
+  { id: 'mech', x: 6.2, y: 8.6, w: 3.4, d: 3.2, h: 2.4, roof: '#395864', windows: 2 },
+  { id: 'mech-annex', x: 9.7, y: 9.4, w: 0.7, d: 1.4, h: 1.6, roof: '#3f606c' },
 
   /* Rail siding wagons */
   ...Array.from({ length: 5 }, (_, i) => ({
@@ -179,7 +179,7 @@ function BlockShape({ b, yaw }: { b: Block; yaw: number }) {
         walls.push(
           <polygon
             key={`w${i}-${r}`}
-            fill="#f47735"
+            fill="#66d9e8"
             opacity={(lit ? 0.5 : 0.34) - r * 0.08}
             points={poly([
               project(corners[i][0], corners[i][1], z1, yaw),
@@ -209,10 +209,10 @@ function CylinderShape({ c, yaw }: { c: Cylinder; yaw: number }) {
   return (
     <g>
       <path
-        fill="#1f333e"
+        fill="#1b2c34"
         d={`M ${cx - rx} ${yBase} L ${cx - rx} ${yTop} A ${rx} ${ry} 0 0 0 ${cx + rx} ${yTop} L ${cx + rx} ${yBase} A ${rx} ${ry} 0 0 1 ${cx - rx} ${yBase} Z`}
       />
-      <ellipse cx={cx} cy={yTop} rx={rx} ry={ry} fill={c.cap ?? '#456575'} />
+      <ellipse cx={cx} cy={yTop} rx={rx} ry={ry} fill={c.cap ?? '#436773'} />
     </g>
   );
 }
@@ -260,19 +260,19 @@ function Artwork({ yaw }: { yaw: number }) {
     >
       <defs>
         <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1b2c35" />
-          <stop offset="100%" stopColor="#0d181e" />
+          <stop offset="0%" stopColor="#17262c" />
+          <stop offset="100%" stopColor="#0b1418" />
         </linearGradient>
         <radialGradient id="siteGlow" cx="50%" cy="30%">
-          <stop offset="0%" stopColor="#f47735" stopOpacity="0.13" />
-          <stop offset="100%" stopColor="#f47735" stopOpacity="0" />
+          <stop offset="0%" stopColor="#66d9e8" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#66d9e8" stopOpacity="0" />
         </radialGradient>
       </defs>
 
       <ellipse cx={OX} cy={OY - 90} rx={600} ry={300} fill="url(#siteGlow)" />
       <polygon
         fill="url(#ground)"
-        stroke="#2b414e"
+        stroke="#284049"
         strokeWidth="1.5"
         points={poly([project(0, 0, 0, yaw), project(14, 0, 0, yaw), project(14, 14, 0, yaw), project(0, 14, 0, yaw)])}
       />

@@ -37,6 +37,7 @@ export default function Hero() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [introHidden, setIntroHidden] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [releasing, setReleasing] = useState(false);
   const [open, setOpen] = useState(false);
   const [reduced, setReduced] = useState(false);
 
@@ -47,8 +48,8 @@ export default function Hero() {
     const ctx = cv.getContext('2d');
     const media = matchMedia('(prefers-reduced-motion: reduce)');
     const styles = getComputedStyle(el);
-    const orange = styles.getPropertyValue('--orange').trim() || '#f47735';
-    const steel = styles.getPropertyValue('--steel').trim() || '#366e8c';
+    const glow = styles.getPropertyValue('--glow').trim() || '#66d9e8';
+    const brand = styles.getPropertyValue('--brand').trim() || '#4c9eaf';
 
     let w = 0;
     let h = 0;
@@ -92,24 +93,28 @@ export default function Hero() {
 
     function tick() {
       progress = readScroll();
-      const split = ease((progress - 0.1) / 0.62);
-      const reveal = ease((progress - 0.34) / 0.5);
+      /* Every transition lands by ~0.60. The remaining scroll is a deliberate
+         hold: the complex stays pinned and fully interactive so the model and
+         its hotspots are not scrolled past before anyone has touched them. */
+      const split = ease((progress - 0.07) / 0.4);
+      const reveal = ease((progress - 0.26) / 0.32);
       el.style.setProperty('--split', String(split));
       el.style.setProperty('--reveal', String(reveal));
-      el.style.setProperty('--intro', String(1 - ease(progress / 0.16)));
+      el.style.setProperty('--intro', String(1 - ease(progress / 0.1)));
       el.style.setProperty('--progress', String(progress));
-      el.style.setProperty('--text-alpha', String(1 - ease((progress - 0.58) / 0.18)));
-      setIntroHidden(progress > 0.16);
-      setRevealed(progress > 0.78);
+      el.style.setProperty('--text-alpha', String(1 - ease((progress - 0.4) / 0.13)));
+      setIntroHidden(progress > 0.1);
+      setRevealed(progress > 0.54);
+      setReleasing(progress > 0.88);
 
       if (ctx) {
         const cx = w / 2;
         const cy = h * 0.48;
         const squash = h / Math.max(1, w);
         /* Constant inward drift at rest; scroll accelerates the collapse. */
-        const pull = 0.4 + progress * 11;
-        const swirl = 0.0022 + progress * 0.004;
-        const globalFade = 1 - ease((progress - 0.42) / 0.3);
+        const pull = 0.4 + Math.min(progress, 0.6) * 17;
+        const swirl = 0.0022 + Math.min(progress, 0.6) * 0.0065;
+        const globalFade = 1 - ease((progress - 0.3) / 0.22);
         ctx.clearRect(0, 0, w, h);
         for (const p of particles) {
           p.r -= pull * p.s;
@@ -124,7 +129,7 @@ export default function Hero() {
           const alpha = near * far * p.z * globalFade * (0.6 + heat * 0.4);
           if (alpha <= 0.01) continue;
           ctx.globalAlpha = alpha;
-          ctx.fillStyle = heat > 0.06 ? orange : p.z > 0.82 ? steel : '#7f939d';
+          ctx.fillStyle = heat > 0.06 ? glow : p.z > 0.82 ? brand : '#5d7078';
           ctx.beginPath();
           ctx.arc(x, y, 0.85 + heat * 1.15, 0, Math.PI * 2);
           ctx.fill();
@@ -157,6 +162,7 @@ export default function Hero() {
       if (still) {
         setIntroHidden(false);
         setRevealed(true);
+        setReleasing(true);
         ctx?.clearRect(0, 0, w, h);
         return;
       }
@@ -187,7 +193,8 @@ export default function Hero() {
       document.getElementById('complex')?.scrollIntoView();
       return;
     }
-    scrollTo({ top: wrap.offsetTop + wrap.offsetHeight - el.clientHeight, behavior: 'smooth' });
+    const travel = wrap.offsetHeight - el.clientHeight;
+    scrollTo({ top: wrap.offsetTop + travel * 0.62, behavior: 'smooth' });
   }
 
   const brand = (
@@ -216,9 +223,10 @@ export default function Hero() {
           <div className="pointer-glow" aria-hidden="true" />
 
           <header className="hero-nav" inert={introHidden}>
-            <a href="/" aria-label="GigaMines home">
+            <a className="nav-brand" href="/" aria-label="GigaMines home">
               {brand}
             </a>
+            <span className="nav-divide" aria-hidden="true" />
             <nav aria-label="Primary">
               {sections.map((s) => (
                 <a key={s.slug} href={`/${s.slug}`}>
@@ -226,11 +234,11 @@ export default function Hero() {
                 </a>
               ))}
             </nav>
-            <a className="contact" href="mailto:info@m-mines.com">
-              Partner with us <ArrowUpRight size={16} />
+            <a className="contact" href="mailto:info@m-mines.com" aria-label="Partner with us">
+              <ArrowUpRight size={16} />
             </a>
             <button className="mobile-menu" aria-label="Open navigation" onClick={() => setOpen(true)}>
-              <Menu />
+              <Menu size={20} />
             </button>
           </header>
 
@@ -304,6 +312,13 @@ export default function Hero() {
                 <i />
                 Interactive 3D model &middot; in development
               </div>
+            </div>
+
+            <div className={`hold-cue ${releasing ? 'releasing' : ''}`} aria-hidden="true">
+              <span className="hold-dwell">TAKE A LOOK AROUND</span>
+              <span className="hold-next">
+                KEEP SCROLLING <ArrowDown size={14} />
+              </span>
             </div>
           </section>
 
