@@ -1,2 +1,15 @@
 import Hero from './hero';
-export default function Home(){return <Hero/>}
+import Stats from './stats';
+import Footer from './footer';
+
+export default function Home() {
+  return (
+    <>
+      <main>
+        <Hero />
+        <Stats />
+      </main>
+      <Footer />
+    </>
+  );
+}
