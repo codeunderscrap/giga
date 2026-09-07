@@ -51,6 +51,21 @@ export default function Hero() {
     const glow = styles.getPropertyValue('--glow').trim() || '#66d9e8';
     const brand = styles.getPropertyValue('--brand').trim() || '#4c9eaf';
 
+    // Particle draw batching: 3 color categories (glow / brand / dim) x a
+    // coarse alpha bucket each, rebuilt fresh every frame and fill()ed once
+    // per bucket — see the note at the call site in tick().
+    const ALPHA_BUCKETS = 8;
+    const particleBuckets: Path2D[][] = [[], [], []];
+    const hexToRgb = (hex: string) => {
+      const h = hex.replace('#', '');
+      return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
+    };
+    const glowRgb = hexToRgb(glow);
+    const brandRgb = hexToRgb(brand);
+    const dimRgb = hexToRgb('#5d7078');
+    const rgbCache = [glowRgb, brandRgb, dimRgb];
+    const withAlpha = (rgb: number[], a: number) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+
     let w = 0;
     let h = 0;
     let maxR = 1;
@@ -116,6 +131,18 @@ export default function Hero() {
         const swirl = 0.0022 + Math.min(progress, 0.6) * 0.0065;
         const globalFade = 1 - ease((progress - 0.3) / 0.22);
         ctx.clearRect(0, 0, w, h);
+
+        /* Up to ~950 particles used to get an individual beginPath/arc/fill
+           call every frame — the actual source of the lag. Geometry (which
+           varies continuously per particle: position, radius, alpha) is
+           still computed per particle below, but the draw itself is now
+           batched into a handful of Path2D groups by color and a coarse
+           alpha bucket, so canvas only pays for a few dozen fill() calls
+           instead of hundreds. */
+        for (let ci = 0; ci < 3; ci++) {
+          for (let bi = 0; bi < ALPHA_BUCKETS; bi++) particleBuckets[ci][bi] = new Path2D();
+        }
+
         for (const p of particles) {
           p.r -= pull * p.s;
           p.a += swirl * p.s;
@@ -128,13 +155,22 @@ export default function Hero() {
           const heat = Math.max(0, 1 - Math.hypot(x - px, y - py) / 210);
           const alpha = near * far * p.z * globalFade * (0.6 + heat * 0.4);
           if (alpha <= 0.01) continue;
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = heat > 0.06 ? glow : p.z > 0.82 ? brand : '#5d7078';
-          ctx.beginPath();
-          ctx.arc(x, y, 0.85 + heat * 1.15, 0, Math.PI * 2);
-          ctx.fill();
+
+          const radius = 0.85 + heat * 1.15;
+          const colorIndex = heat > 0.06 ? 0 : p.z > 0.82 ? 1 : 2;
+          const bucket = Math.min(ALPHA_BUCKETS - 1, Math.max(0, Math.round(alpha * (ALPHA_BUCKETS - 1))));
+          const path = particleBuckets[colorIndex][bucket];
+          path.moveTo(x + radius, y);
+          path.arc(x, y, radius, 0, Math.PI * 2);
         }
-        ctx.globalAlpha = 1;
+
+        for (let bi = 1; bi < ALPHA_BUCKETS; bi++) {
+          const a = bi / (ALPHA_BUCKETS - 1);
+          for (let ci = 0; ci < 3; ci++) {
+            ctx.fillStyle = withAlpha(rgbCache[ci], a);
+            ctx.fill(particleBuckets[ci][bi]);
+          }
+        }
       }
       frame = requestAnimationFrame(tick);
     }
@@ -228,9 +264,12 @@ export default function Hero() {
             </a>
             <span className="nav-divide" aria-hidden="true" />
             <nav aria-label="Primary">
+              <a href="#about">About</a>
+              <a href="#technology">Technology</a>
+              <a href="#services">Services</a>
               <a href="/products">Products</a>
             </nav>
-            <a className="contact" href="mailto:info@m-mines.com" aria-label="Partner with us">
+            <a className="contact" href="http://localhost:3100/#contact" aria-label="Contact us">
               <ArrowUpRight size={16} />
             </a>
             <button className="mobile-menu" aria-label="Open navigation" onClick={() => setOpen(true)}>

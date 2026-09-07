@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import ScrollRail from './scroll-rail';
+import CustomCursor from './custom-cursor';
 
 export const metadata: Metadata = {
   title: 'GigaMines — Critical minerals. Renewed potential.',
@@ -23,6 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body>
+        <CustomCursor />
         <ScrollRail />
         {children}
       </body>

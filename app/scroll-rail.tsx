@@ -1,8 +1,10 @@
 'use client';
 /* ---------------------------------------------------------------------------
-   Left-edge scroll rail. A hairline track with a droplet running down it, the
-   filled length carrying a teal-to-cyan-to-ember gradient. Decorative only —
-   the native scrollbar keeps doing the work for anyone who needs it.
+   Right-edge scroll rail. A dashed hairline track with a solid gradient fill
+   terminating at a glowing dot that tracks scroll progress — same structure
+   as the Minimines contact page's indicator, still GigaMines' own teal-to-
+   cyan-to-ember palette. Decorative only — the native scrollbar keeps doing
+   the work for anyone who needs it.
 --------------------------------------------------------------------------- */
 import { useEffect, useState } from 'react';
 

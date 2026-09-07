@@ -81,6 +81,29 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--glow); outline-
 }
 .skip:focus { transform: none }
 
+/* --- Custom cursor ---------------------------------------------------------
+   Same as the Minimines contact page: an instant-follow dot plus a ring
+   pulled toward it with spring physics. mix-blend-mode: difference means the
+   white here inverts against whatever's underneath, so no theme-specific
+   color is needed.
+--------------------------------------------------------------------------- */
+.cc-dot {
+  position: fixed; top: 0; left: 0; width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; pointer-events: none; z-index: 9999;
+  /* A single translate(-50%,-50%) here — not chained with anything else —
+     so GSAP's transform parser can detect and preserve it as xPercent/
+     yPercent while animating x/y in pixels separately. Chaining a second
+     translate() would collapse into one matrix and lose that distinction. */
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+.cc-ring {
+  position: fixed; top: 0; left: 0; width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid #fff; pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+
 /* Shared label style: mono, modest tracking. */
 .section-index, .scene-index, .scene-top > span, .marquee span, .scroll-cue button,
 .hold-cue, .rotate-hint, .products-crumb, .pt-eyebrow, .pt-index, .pt-mtpa,
@@ -88,27 +111,31 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--glow); outline-
   font-family: var(--mono);
 }
 
-/* --- Left scroll rail ----------------------------------------------------- */
+/* --- Right scroll rail ------------------------------------------------------
+   Dashed unfilled track + a solid brand-gradient fill that terminates exactly
+   at a centered glowing dot, tracking scroll progress — same structure as
+   the Minimines contact page's indicator, still GigaMines' own palette.
+--------------------------------------------------------------------------- */
 .scroll-rail {
-  position: fixed; z-index: 60; left: 20px; top: 18vh; bottom: 18vh; width: 14px;
+  position: fixed; z-index: 60; right: 20px; top: 18vh; bottom: 18vh; width: 14px;
   pointer-events: none;
 }
 .rail-track, .rail-fill { position: absolute; left: 6px; width: 2px; border-radius: 2px }
-.rail-track { top: 0; bottom: 0; background: #8b9ca233 }
+.rail-track {
+  top: 0; bottom: 0;
+  background-image: repeating-linear-gradient(to bottom, #8b9ca24d 0px, #8b9ca24d 4px, transparent 4px, transparent 8px);
+}
 .rail-fill {
   top: 0; height: calc(var(--p, 0) * 100%);
   background: linear-gradient(180deg, var(--brand) 0%, var(--glow) 48%, #9fd9c8 74%, var(--ember) 100%);
+  box-shadow: 0 0 8px -1px #66d9e880;
 }
 .rail-drop {
-  position: absolute; left: 1px; width: 12px; height: 18px;
-  top: calc(var(--p, 0) * 100%); margin-top: -9px;
-  border-radius: 52% 52% 52% 52% / 66% 66% 40% 40%;
-  background: linear-gradient(165deg, var(--glow) 0%, var(--brand) 54%, var(--ember) 100%);
-  box-shadow: 0 0 14px -3px #66d9e899;
-}
-.rail-drop::after {
-  content: ''; position: absolute; inset: 2.5px 3px 7px 3px;
-  border-radius: 50%; background: #ffffff55; filter: blur(1px);
+  position: absolute; left: 2.5px; width: 9px; height: 9px;
+  top: calc(var(--p, 0) * 100%); margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--ice);
+  box-shadow: 0 0 8px 2px #eaf4f5e6, 0 0 16px 4px #66d9e899;
 }
 
 /* --- Wordmark ------------------------------------------------------------- */
@@ -142,7 +169,10 @@ body:has(.site-foot) { background: var(--paper) }
   display: flex; align-items: center; gap: 4px;
   width: max-content; padding: 7px 7px 7px 20px;
   border: 1px solid var(--line); border-radius: 60px;
-  background: #0d1519e8; backdrop-filter: blur(16px);
+  /* Same deep-glass treatment as the Minimines contact page's navbar —
+     heavier blur + saturation, lighter fill so it actually reads as glass. */
+  background: #0d1519b3; backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   opacity: var(--intro);
   transform: translateX(-50%) translateY(calc((1 - var(--intro)) * -130px));
 }
@@ -151,10 +181,13 @@ body:has(.site-foot) { background: var(--paper) }
 .hero-nav nav a { padding: 9px 15px; border-radius: 30px; font-size: 13.5px; color: var(--body) }
 .hero-nav nav a:hover { background: #ffffff10; color: var(--ice) }
 .contact {
+  /* The one deliberate orange touch on the landing page, matching how the
+     Minimines contact page uses orange specifically for its call-to-action —
+     everything else here stays GigaMines' own teal/cyan identity. */
   display: grid; place-items: center; width: 34px; height: 34px; margin-left: 8px;
-  border-radius: 50%; background: var(--glow); color: var(--charcoal);
+  border-radius: 50%; background: var(--ember); color: var(--charcoal);
 }
-.contact:hover { box-shadow: 0 0 18px -4px var(--glow) }
+.contact:hover { box-shadow: 0 0 18px -4px var(--ember) }
 .mobile-menu { display: none; width: 34px; height: 34px; border-radius: 50%; background: #ffffff10; color: var(--ice); place-items: center }
 
 /* --- Ring ----------------------------------------------------------------- */
@@ -165,7 +198,10 @@ body:has(.site-foot) { background: var(--paper) }
   background: conic-gradient(from 205deg,
     #66d9e800 0deg, #66d9e833 30deg, var(--glow) 74deg, #9fe6ef 104deg,
     #4c9eafcc 148deg, var(--brand) 190deg, #4c9eaf55 230deg, #4c9eaf00 288deg);
-  box-shadow: 0 -16px 64px -16px #66d9e855, 0 20px 64px -20px #4c9eaf44;
+  /* Lower glow shifted from teal to ember/orange — top glow stays cyan.
+     Wider blur so the orange reach climbs most of the way up the circle,
+     per the reference mark, rather than only hugging the bottom edge. */
+  box-shadow: 0 -16px 64px -16px #66d9e855, 0 30px 190px -20px #d98a4f66;
   opacity: calc(1 - var(--reveal) * .94);
 }
 .orbit > div {
@@ -655,7 +691,7 @@ body:has(.products-page) { background: var(--paper) }
   .scene-head { top: 19%; right: 5% }
   .scene-foot > span { display: none }
   .scene { --art-transform: scale(1.16) translate(8%, 6%) }
-  .scroll-rail { left: 12px }
+  .scroll-rail { right: 12px }
 }
 @media (max-width: 720px) {
   .pt-stage { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px }
