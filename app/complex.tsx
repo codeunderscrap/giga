@@ -300,12 +300,13 @@ const START_YAW = 0;
 export default function Complex({ revealed }: { revealed: boolean }) {
   const [yaw, setYaw] = useState(START_YAW);
   const [dragging, setDragging] = useState(false);
-  const drag = useRef<{ id: number; x: number; yaw: number } | null>(null);
+  const [picked, setPicked] = useState<string | null>(null);
+  const drag = useRef<{ id: number; x: number; yaw: number; moved: boolean } | null>(null);
 
   const onDown = useCallback(
     (e: React.PointerEvent) => {
       if (e.button !== 0 && e.pointerType === 'mouse') return;
-      drag.current = { id: e.pointerId, x: e.clientX, yaw };
+      drag.current = { id: e.pointerId, x: e.clientX, yaw, moved: false };
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       setDragging(true);
     },
@@ -315,7 +316,9 @@ export default function Complex({ revealed }: { revealed: boolean }) {
   const onMove = useCallback((e: React.PointerEvent) => {
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
-    setYaw(d.yaw + ((e.clientX - d.x) / 260));
+    const dx = e.clientX - d.x;
+    if (Math.abs(dx) > 3) d.moved = true;
+    setYaw(d.yaw + dx / 260);
   }, []);
 
   const onUp = useCallback((e: React.PointerEvent) => {
@@ -342,6 +345,9 @@ export default function Complex({ revealed }: { revealed: boolean }) {
     return () => m.removeEventListener('change', sync);
   }, []);
 
+  const angle = still ? START_YAW : yaw;
+  const active = capabilities.find((c) => c.slug === picked);
+
   return (
     <>
       <div
@@ -353,40 +359,69 @@ export default function Complex({ revealed }: { revealed: boolean }) {
         onKeyDown={onKey}
         role={still ? undefined : 'slider'}
         aria-label={still ? undefined : 'Rotate the complex'}
-        aria-valuetext={still ? undefined : `${Math.round((((yaw * 180) / Math.PI) % 360 + 360) % 360)} degrees`}
+        aria-valuetext={still ? undefined : `${Math.round((((angle * 180) / Math.PI) % 360 + 360) % 360)} degrees`}
         tabIndex={revealed && !still ? 0 : -1}
       >
         <div className="complex-frame">
-          <Artwork yaw={still ? START_YAW : yaw} />
+          <Artwork yaw={angle} />
         </div>
       </div>
 
       <div className="scene-scrim" aria-hidden="true" />
 
+      {/* One text area, not a stack of panels: selecting a point swaps the
+          standing description for that capability. */}
+      <div className="scene-head">
+        {active ? (
+          <>
+            <span className="scene-index">
+              {active.index} / {active.name.toUpperCase()}
+              {active.status && <em>{active.status}</em>}
+            </span>
+            <h2>{active.name}</h2>
+            <p>{active.summary}</p>
+            <button type="button" className="scene-clear" onClick={() => setPicked(null)}>
+              Back to the complex
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="scene-index">01 / THE GIGA COMPLEX</span>
+            <h2>G&#8209;HUB</h2>
+            <p>
+              India&rsquo;s first integrated giga-scale critical mineral and rare earth refining complex. Fifty acres,
+              one continuous circuit from feedstock to refined metal.
+            </p>
+          </>
+        )}
+      </div>
+
       <div className="complex-fit pins">
         <div className="complex-frame">
           {capabilities.map((c) => {
-            const angle = still ? START_YAW : yaw;
-            /* Pills stack by depth and the far side recedes, so an overlap at
-               any given angle still reads front-to-back. */
             const depth = depthOf(c.anchor[0], c.anchor[1], angle);
             const near = (depth + 10) / 20;
             return (
-              <a
+              <button
                 key={c.slug}
-                className="hotspot"
-                href={`/capabilities/${c.slug}`}
+                type="button"
+                className={`hotspot ${picked === c.slug ? 'is-active' : ''}`}
+                aria-pressed={picked === c.slug}
+                onClick={() => {
+                  /* A drag that ends on a pill should rotate, not select. */
+                  if (drag.current?.moved) return;
+                  setPicked(picked === c.slug ? null : c.slug);
+                }}
                 style={{
                   ...projectPercent(c.anchor[0], c.anchor[1], c.anchor[2], angle),
                   zIndex: Math.round(depth * 100) + 2000,
-                  opacity: 0.62 + near * 0.38,
+                  opacity: 0.66 + near * 0.34,
                 }}
                 tabIndex={revealed ? 0 : -1}
               >
                 <span className="dot">{c.index}</span>
                 {c.name}
-                {c.status && <small>{c.status}</small>}
-              </a>
+              </button>
             );
           })}
         </div>

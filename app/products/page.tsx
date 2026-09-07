@@ -1,41 +1,31 @@
 import { ArrowLeft } from 'lucide-react';
 import Periodic from '../periodic';
-import Footer from '../footer';
-import { sections } from '../capabilities';
 
 export default function ProductsPage() {
   return (
-    <>
-      <main className="products-page">
-        <header className="products-nav">
-          <a className="page-back" href="/">
-            <ArrowLeft size={16} /> Back to the complex
-          </a>
-          <nav aria-label="Primary">
-            {sections.map((s) => (
-              <a key={s.slug} href={`/${s.slug}`} aria-current={s.slug === 'products' ? 'page' : undefined}>
-                {s.name}
-              </a>
-            ))}
-          </nav>
-        </header>
+    <main className="products-page">
+      <header className="products-nav">
+        <a className="page-back" href="/">
+          <ArrowLeft size={15} /> GigaMines
+        </a>
+        <span className="products-crumb">Product output</span>
+      </header>
 
-        <div className="products-intro">
-          <span className="section-index">P / PRODUCT OUTPUT</span>
-          <h1>
-            Ten streams
-            <br />
-            <em>out of one circuit.</em>
-          </h1>
-          <p>
-            Everything the complex recovers, laid out as a table. Select a product to see how it comes out of the
-            circuit and where it goes next. Tonnages are planned Phase I capacity.
-          </p>
-        </div>
+      <div className="products-intro">
+        <span className="section-index">Phase I</span>
+        <h1>Product output</h1>
+        <p>
+          Ten refined streams out of one circuit. Select a product for its route through the complex and where it goes
+          next. Tonnages are planned Phase&nbsp;I capacity.
+        </p>
+      </div>
 
-        <Periodic />
-      </main>
-      <Footer />
-    </>
+      <Periodic />
+
+      <footer className="products-foot">
+        <span>A MiniMines Cleantech Solutions venture</span>
+        <a href="mailto:info@m-mines.com">info@m-mines.com</a>
+      </footer>
+    </main>
   );
 }

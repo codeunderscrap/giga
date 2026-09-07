@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, ArrowDown, Menu } from 'lucide-react';
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { capabilities, sections } from './capabilities';
+
 import Complex from './complex';
 
 const clamp = (n: number) => Math.max(0, Math.min(1, n));
@@ -228,11 +228,7 @@ export default function Hero() {
             </a>
             <span className="nav-divide" aria-hidden="true" />
             <nav aria-label="Primary">
-              {sections.map((s) => (
-                <a key={s.slug} href={`/${s.slug}`}>
-                  {s.name}
-                </a>
-              ))}
+              <a href="/products">Products</a>
             </nav>
             <a className="contact" href="mailto:info@m-mines.com" aria-label="Partner with us">
               <ArrowUpRight size={16} />
@@ -281,31 +277,6 @@ export default function Hero() {
               <span>RECYCLE / RECOVER / REFINE</span>
             </div>
 
-            <div className="scene-head">
-              <span className="scene-index">01 / THE GIGA COMPLEX</span>
-              <h2>
-                Inside
-                <br />
-                <em>G-HUB.</em>
-              </h2>
-              <p>
-                India&rsquo;s first integrated giga-scale critical mineral and rare earth refining complex. Fifty acres,
-                one continuous circuit from feedstock to refined metal.
-              </p>
-            </div>
-
-            {/* Narrow screens: the pills cannot sit on the model without
-                colliding, so the same links become a swipeable rail. */}
-            <div className="hotspot-rail">
-              {capabilities.map((c) => (
-                <a key={c.slug} className="hotspot" href={`/capabilities/${c.slug}`} tabIndex={revealed ? 0 : -1}>
-                  <span className="dot">{c.index}</span>
-                  {c.name}
-                  {c.status && <small>{c.status}</small>}
-                </a>
-              ))}
-            </div>
-
             <div className="scene-foot">
               <span>50 ACRES &middot; PHASE I</span>
               <div className="model-status">
@@ -338,25 +309,14 @@ export default function Hero() {
               </SheetTitle>
               <SheetDescription>Critical minerals. Renewed potential.</SheetDescription>
               <nav className="chapter-links" aria-label="Explore">
-                {capabilities.map((c) => (
-                  <a key={c.slug} href={`/capabilities/${c.slug}`}>
-                    <span>
-                      <small>{c.index}</small>
-                      {c.name}
-                      {c.status && <em>{c.status}</em>}
-                    </span>
-                    <ArrowUpRight />
-                  </a>
-                ))}
-                {sections.map((s) => (
-                  <a key={s.slug} href={`/${s.slug}`}>
-                    <span>
-                      <small>&mdash;</small>
-                      {s.name}
-                    </span>
-                    <ArrowUpRight />
-                  </a>
-                ))}
+                <a href="/">
+                  <span>Home</span>
+                  <ArrowUpRight />
+                </a>
+                <a href="/products">
+                  <span>Products</span>
+                  <ArrowUpRight />
+                </a>
               </nav>
               <a className="partner-link" href="mailto:info@m-mines.com">
                 Partner with us <ArrowUpRight size={18} />
