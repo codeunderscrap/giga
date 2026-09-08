@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ── Minimines Brand Palette ── */
+    --color-bg:           #0A1525;
+    --color-bg-subtle:    #0D1B2E;
+    --color-surface:      #0F2038;
+    --color-border:       rgba(255,255,255,0.07);
+    --color-text:         #F0F0F0;
+    --color-text-muted:   #6B7A8D;
+    --color-accent:       #E8571A;   /* Orange */
+    --color-teal:         #2D96B2;   /* Teal */
+    --color-highlight:    #FFFFFF;
+
+    /* ── Typography ── */
+    --font-display:  "Inter", system-ui, sans-serif;
+    --font-body:     "Inter", system-ui, sans-serif;
+    --font-mono:     "JetBrains Mono", "Courier New", monospace;
+
+    /* ── Spacing ── */
+    --section-padding: clamp(4rem, 10vw, 10rem);
+
+    /* ── Easing ── */
+    --ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out:     cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    overflow-x: hidden;
+    background-color: var(--color-bg);
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-teal);
+    outline-offset: 4px;
+  }
+}
+
+@layer utilities {
+  /* ── Display Typography ── */
+  .text-display {
+    font-size: clamp(2.8rem, 7vw, 7.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .text-headline {
+    font-size: clamp(1.8rem, 4vw, 4rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .text-subhead {
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+
+  /* ── Mono / Technical UI Labels ── */
+  .text-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ── Layout ── */
+  .section-pad {
+    padding-block: var(--section-padding);
+  }
+
+  /* ── Clip-path reveal ── */
+  .clip-reveal {
+    clip-path: inset(0 0 100% 0);
+  }
+  .clip-revealed {
+    clip-path: inset(0 0 0% 0);
+  }
+
+  /* ── Glassmorphism card ── */
+  .glass-card {
+    background: rgba(15, 32, 56, 0.55);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  /* ── Ambient glow orbs ── */
+  .orb-orange {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,87,26,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    filter: blur(60px);
+  }
+
+  .orb-teal {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,150,178,0.10) 0%, transparent 70%);
+    pointer-events: none;
+    filter: blur(80px);
+  }
+}
